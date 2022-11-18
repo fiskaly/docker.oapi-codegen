@@ -42,7 +42,7 @@ jobs:
   # https://github.com/actions/virtual-environments/blob/main/images/linux
   release:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    # if: github.ref == 'refs/heads/master'
     permissions:
       contents: read
       packages: write
