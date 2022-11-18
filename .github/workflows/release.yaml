@@ -27,7 +27,7 @@
 
 # https://help.github.com/en/articles/virtual-environments-for-github-actions
 
-name: build
+name: release
 
 on:
   push:
