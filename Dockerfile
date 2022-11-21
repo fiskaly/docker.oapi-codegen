@@ -25,10 +25,36 @@
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
 
-FROM golang:1.17-alpine
-RUN go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.12.0
+FROM golang:1.17-alpine \
+  AS build
 
-FROM alpine:3.16.2
-COPY --from=0 /go/bin/oapi-codegen /usr/local/bin/
-RUN oapi-codegen -version
-CMD [ "/bin/bash" ]
+ENV USER=appuser
+ENV UID=10001
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    "${USER}"
+
+RUN apk update \
+ && apk add --no-cache ca-certificates \
+ && update-ca-certificates
+
+RUN CGO_ENABLED=0 \
+    go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.12.0 \
+ && /go/bin/oapi-codegen -version
+
+FROM scratch \
+  AS image
+
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /etc/passwd /etc/passwd
+COPY --from=build /etc/group /etc/group
+COPY --from=build /go/bin/oapi-codegen /oapi-codegen
+
+USER appuser:appuser
+ENTRYPOINT ["/oapi-codegen"]
+CMD ["-help"]
