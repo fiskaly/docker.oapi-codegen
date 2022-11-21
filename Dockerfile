@@ -26,9 +26,9 @@
 #   SOFTWARE.
 
 FROM golang:1.17-alpine
-
 RUN go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.12.0
 
-WORKDIR /go/bin
-
+FROM alpine:3.16.2
+COPY --from=0 /go/bin/oapi-codegen /usr/local/bin/
+RUN oapi-codegen -version
 CMD [ "/bin/bash" ]
