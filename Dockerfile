@@ -25,7 +25,7 @@
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
 
-FROM golang:1.20-alpine \
+FROM golang:1.17-alpine \
   AS build
 
 ENV USER=appuser
@@ -44,7 +44,7 @@ RUN apk update \
  && update-ca-certificates
 
 RUN CGO_ENABLED=0 \
-    go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.12 \
+    go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.12.4 \
  && /go/bin/oapi-codegen -version
 
 FROM scratch \
