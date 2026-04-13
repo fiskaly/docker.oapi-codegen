@@ -44,7 +44,7 @@ RUN apk update \
  && update-ca-certificates
 
 RUN CGO_ENABLED=0 \
-    go install github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@v2.1.0 \
+    go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.6.0 \
  && /go/bin/oapi-codegen -version
 
 FROM scratch \
